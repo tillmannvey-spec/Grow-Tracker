@@ -1,0 +1,28 @@
+{
+  "name": "Grow Tracker",
+  "short_name": "GrowTracker",
+  "description": "Cannabis Home Grow Tracker - Pflanzenwachstum verfolgen und dokumentieren",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#16a34a",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/icon-1024x1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "utilities"],
+  "lang": "de",
+  "dir": "ltr"
+}

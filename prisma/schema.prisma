@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Plant {
+  id              String   @id @default(cuid())
+  name            String
+  strain          String?
+  plantDate       DateTime
+  floweringWeeks  Int      @default(8)
+  notes           String?
+  imageUrls       String   @default("[]") // JSON array of image URLs
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  wateringRecords WateringRecord[]
+}
+
+model WateringRecord {
+  id        String   @id @default(cuid())
+  plantId   String
+  wateredAt DateTime @default(now())
+  notes     String?
+  plant     Plant    @relation(fields: [plantId], references: [id], onDelete: Cascade)
+}
