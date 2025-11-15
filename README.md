@@ -1,141 +1,219 @@
-# 🚀 Welcome to Z.ai Code Scaffold
+# 🌱 Grow Tracker
 
-A modern, production-ready web application scaffold powered by cutting-edge technologies, designed to accelerate your development with [Z.ai](https://chat.z.ai)'s AI-powered coding assistance.
+A modern, beautiful Progressive Web App (PWA) for tracking cannabis plant growth from seed to harvest. Built with Next.js 15, featuring dark mode, and ready to deploy on Vercel with Supabase.
 
-## ✨ Technology Stack
+## ✨ Features
 
-This scaffold provides a robust foundation built with:
+- **📱 Progressive Web App** - Install on mobile devices for a native app experience
+- **🌙 Dark Mode** - Beautiful dark/light theme with smooth transitions
+- **🌱 Plant Management** - Track multiple plants with detailed growth phases
+- **💧 Watering Tracker** - Log and monitor watering schedules
+- **📊 Growth Progress** - Visual progress bars showing vegetative and flowering phases
+- **📸 Image Gallery** - Upload and view plant photos throughout the grow cycle
+- **📝 Notes & Details** - Add custom notes, strain info, and grow parameters
+- **📅 Timeline View** - See complete watering history with timestamps
+- **🎨 Modern UI** - Clean, minimalist design with glassmorphism effects
+- **⚡ Real-time Updates** - Instant feedback with toast notifications
+- **📱 Responsive** - Optimized for mobile, tablet, and desktop
 
-### 🎯 Core Framework
-- **⚡ Next.js 15** - The React framework for production with App Router
-- **📘 TypeScript 5** - Type-safe JavaScript for better developer experience
-- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development
+## 🚀 Tech Stack
 
-### 🧩 UI Components & Styling
-- **🧩 shadcn/ui** - High-quality, accessible components built on Radix UI
-- **🎯 Lucide React** - Beautiful & consistent icon library
-- **🌈 Framer Motion** - Production-ready motion library for React
-- **🎨 Next Themes** - Perfect dark mode in 2 lines of code
+### Core
+- **Next.js 15** - React framework with App Router
+- **TypeScript 5** - Type-safe development
+- **Tailwind CSS 4** - Utility-first styling with dark mode support
+- **Prisma** - Type-safe database ORM
+- **PostgreSQL** - Production database (via Supabase)
 
-### 📋 Forms & Validation
-- **🎣 React Hook Form** - Performant forms with easy validation
-- **✅ Zod** - TypeScript-first schema validation
+### UI & Components
+- **shadcn/ui** - High-quality, accessible components
+- **Lucide React** - Beautiful icon library
+- **next-themes** - Dark/light mode theming
+- **Sonner** - Toast notifications
+- **Framer Motion** - Smooth animations
 
-### 🔄 State Management & Data Fetching
-- **🐻 Zustand** - Simple, scalable state management
-- **🔄 TanStack Query** - Powerful data synchronization for React
-- **🌐 Axios** - Promise-based HTTP client
+### Hosting & Database
+- **Vercel** - Serverless deployment platform
+- **Supabase** - PostgreSQL database hosting (free tier)
 
-### 🗄️ Database & Backend
-- **🗄️ Prisma** - Next-generation Node.js and TypeScript ORM
-- **🔐 NextAuth.js** - Complete open-source authentication solution
+## 🎯 Quick Start
 
-### 🎨 Advanced UI Features
-- **📊 TanStack Table** - Headless UI for building tables and datagrids
-- **🖱️ DND Kit** - Modern drag and drop toolkit for React
-- **📊 Recharts** - Redefined chart library built with React and D3
-- **🖼️ Sharp** - High performance image processing
+### Prerequisites
+- Node.js 18+
+- npm or yarn
+- Supabase account (free)
 
-### 🌍 Internationalization & Utilities
-- **🌍 Next Intl** - Internationalization library for Next.js
-- **📅 Date-fns** - Modern JavaScript date utility library
-- **🪝 ReactUse** - Collection of essential React hooks for modern development
+### Local Development
 
-## 🎯 Why This Scaffold?
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/grow-tracker.git
+   cd grow-tracker
+   ```
 
-- **🏎️ Fast Development** - Pre-configured tooling and best practices
-- **🎨 Beautiful UI** - Complete shadcn/ui component library with advanced interactions
-- **🔒 Type Safety** - Full TypeScript configuration with Zod validation
-- **📱 Responsive** - Mobile-first design principles with smooth animations
-- **🗄️ Database Ready** - Prisma ORM configured for rapid backend development
-- **🔐 Auth Included** - NextAuth.js for secure authentication flows
-- **📊 Data Visualization** - Charts, tables, and drag-and-drop functionality
-- **🌍 i18n Ready** - Multi-language support with Next Intl
-- **🚀 Production Ready** - Optimized build and deployment settings
-- **🤖 AI-Friendly** - Structured codebase perfect for AI assistance
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-## 🚀 Quick Start
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   Then edit `.env` and add your Supabase connection strings (see [DEPLOYMENT.md](DEPLOYMENT.md) for details)
 
-```bash
-# Install dependencies
-npm install
+4. **Set up the database**
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
 
-# Start development server
-npm run dev
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-# Build for production
-npm run build
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-# Start production server
-npm start
-```
+## 📦 Deployment
 
-Open [http://localhost:3000](http://localhost:3000) to see your application running.
+This app is designed to be deployed on Vercel with Supabase as the database. See the detailed [DEPLOYMENT.md](DEPLOYMENT.md) guide for step-by-step instructions.
 
-## 🤖 Powered by Z.ai
+**Quick deployment steps:**
+1. Set up Supabase project and get connection strings
+2. Push code to GitHub
+3. Import project to Vercel
+4. Add environment variables
+5. Deploy!
 
-This scaffold is optimized for use with [Z.ai](https://chat.z.ai) - your AI assistant for:
-
-- **💻 Code Generation** - Generate components, pages, and features instantly
-- **🎨 UI Development** - Create beautiful interfaces with AI assistance  
-- **🔧 Bug Fixing** - Identify and resolve issues with intelligent suggestions
-- **📝 Documentation** - Auto-generate comprehensive documentation
-- **🚀 Optimization** - Performance improvements and best practices
-
-Ready to build something amazing? Start chatting with Z.ai at [chat.z.ai](https://chat.z.ai) and experience the future of AI-powered development!
+Both Supabase and Vercel offer generous free tiers perfect for personal projects.
 
 ## 📁 Project Structure
 
 ```
-src/
-├── app/                 # Next.js App Router pages
-├── components/          # Reusable React components
-│   └── ui/             # shadcn/ui components
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions and configurations
+grow-tracker/
+├── src/
+│   ├── app/                      # Next.js App Router
+│   │   ├── page.tsx             # Home page - plant dashboard
+│   │   ├── layout.tsx           # Root layout with theme provider
+│   │   ├── plants/
+│   │   │   ├── new/            # New plant form
+│   │   │   └── [id]/           # Plant detail page
+│   │   └── api/
+│   │       └── plants/          # API routes for CRUD operations
+│   ├── components/
+│   │   ├── ui/                  # shadcn/ui components
+│   │   └── ThemeToggle.tsx      # Dark/light mode toggle
+│   └── lib/
+│       ├── db.ts                # Prisma client singleton
+│       └── utils.ts             # Utility functions
+├── prisma/
+│   └── schema.prisma            # Database schema
+├── public/                       # Static assets & PWA files
+├── agents/                       # AI agent configurations
+├── CLAUDE.md                     # Development documentation
+├── DEPLOYMENT.md                 # Deployment guide
+└── README.md                     # This file
 ```
 
-## 🎨 Available Features & Components
+## 🌱 How It Works
 
-This scaffold includes a comprehensive set of modern web development tools:
+### Growth Phases
 
-### 🧩 UI Components (shadcn/ui)
-- **Layout**: Card, Separator, Aspect Ratio, Resizable Panels
-- **Forms**: Input, Textarea, Select, Checkbox, Radio Group, Switch
-- **Feedback**: Alert, Toast (Sonner), Progress, Skeleton
-- **Navigation**: Breadcrumb, Menubar, Navigation Menu, Pagination
-- **Overlay**: Dialog, Sheet, Popover, Tooltip, Hover Card
-- **Data Display**: Badge, Avatar, Calendar
+The app tracks plants through two main phases:
 
-### 📊 Advanced Data Features
-- **Tables**: Powerful data tables with sorting, filtering, pagination (TanStack Table)
-- **Charts**: Beautiful visualizations with Recharts
-- **Forms**: Type-safe forms with React Hook Form + Zod validation
+1. **Vegetative Phase (VT)** - 35 days (5 weeks)
+   - Progress displayed as VT0-VT35
+   - Green progress bar
+   - Focus on growth and development
 
-### 🎨 Interactive Features
-- **Animations**: Smooth micro-interactions with Framer Motion
-- **Drag & Drop**: Modern drag-and-drop functionality with DND Kit
-- **Theme Switching**: Built-in dark/light mode support
+2. **Flowering Phase (BT)** - Configurable (default 8 weeks)
+   - Progress displayed as BT0-BT56 (for 8 weeks)
+   - Purple progress bar
+   - Countdown to harvest
 
-### 🔐 Backend Integration
-- **Authentication**: Ready-to-use auth flows with NextAuth.js
-- **Database**: Type-safe database operations with Prisma
-- **API Client**: HTTP requests with Axios + TanStack Query
-- **State Management**: Simple and scalable with Zustand
+### Data Model
 
-### 🌍 Production Features
-- **Internationalization**: Multi-language support with Next Intl
-- **Image Optimization**: Automatic image processing with Sharp
-- **Type Safety**: End-to-end TypeScript with Zod validation
-- **Essential Hooks**: 100+ useful React hooks with ReactUse for common patterns
+- **Plant** - Core plant information (name, strain, dates, notes, images)
+- **WateringRecord** - Timestamped watering logs linked to plants
+- **User** - User management (ready for authentication)
 
-## 🤝 Get Started with Z.ai
+## 🎨 Design Philosophy
 
-1. **Clone this scaffold** to jumpstart your project
-2. **Visit [chat.z.ai](https://chat.z.ai)** to access your AI coding assistant
-3. **Start building** with intelligent code generation and assistance
-4. **Deploy with confidence** using the production-ready setup
+**Modern Minimalism, Not Boring**
+
+- **Glassmorphism** - Frosted glass effects with backdrop blur
+- **Gradient Design System** - Color-coded sections (green, purple, blue, amber)
+- **Micro-interactions** - Hover effects, scale animations, smooth transitions
+- **Scannable Hierarchy** - Clear visual structure with badges and progress bars
+- **Dark Mode First** - Beautiful dark theme as default, with light mode option
+
+## 🛠️ Development
+
+### Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm start            # Start production server
+npm run lint         # Run ESLint
+```
+
+### Database Commands
+
+```bash
+npx prisma studio    # Open Prisma Studio (database GUI)
+npx prisma generate  # Generate Prisma Client
+npx prisma db push   # Push schema changes to database
+```
+
+## 🤖 AI-Powered Development
+
+This project includes configuration for AI-assisted development:
+
+- **CLAUDE.md** - Comprehensive project documentation for Claude Code
+- **agents/** - Pre-configured agents for code review and design review
+- Optimized codebase structure for AI understanding
+
+## 📝 Environment Variables
+
+Required environment variables (see `.env.example`):
+
+```env
+DATABASE_URL="postgresql://..."      # Supabase connection (Transaction mode)
+DIRECT_URL="postgresql://..."        # Supabase connection (Session mode)
+```
+
+## 🔒 Security Notes
+
+- Never commit `.env` file (already in `.gitignore`)
+- Keep database credentials secure
+- Use Supabase Row Level Security (RLS) for production
+- Consider adding authentication with NextAuth.js
+
+## 🌟 Future Enhancements
+
+Potential features to add:
+- [ ] User authentication and multi-user support
+- [ ] Nutrient tracking and feeding schedules
+- [ ] Environmental data (temp, humidity, pH)
+- [ ] Harvest tracking and yield recording
+- [ ] Export grow logs to PDF
+- [ ] Charts and analytics
+- [ ] Clone/mother plant tracking
+- [ ] Grow journal with Markdown support
+
+## 📄 License
+
+This project is open source and available under the MIT License.
+
+## 🙏 Credits
+
+Built with modern web technologies and best practices. Designed for cannabis growers who want a simple, beautiful way to track their plants.
 
 ---
 
-Built with ❤️ for the developer community. Supercharged by [Z.ai](https://chat.z.ai) 🚀
+**Made with ❤️ for the growing community** 🌱
+
+Need help? Check out [DEPLOYMENT.md](DEPLOYMENT.md) or [CLAUDE.md](CLAUDE.md) for detailed documentation.
