@@ -20,18 +20,18 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { name, strain, plantDate, floweringWeeks, notes } = body
-    
+
     const plant = await db.plant.create({
       data: {
         name,
         strain: strain || null,
         plantDate: new Date(plantDate),
-        floweringWeeks: floweringWeeks || 8,
+        floweringWeeks: floweringWeeks ? parseInt(floweringWeeks, 10) : 8,
         notes: notes || null,
         imageUrls: '[]'
       }
     })
-    
+
     return NextResponse.json(plant)
   } catch (error) {
     console.error('Failed to create plant:', error)
