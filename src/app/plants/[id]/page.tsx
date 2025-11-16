@@ -18,6 +18,7 @@ interface Plant {
   name: string
   strain?: string
   plantDate: string
+  floweringStartDate?: string | null
   floweringWeeks: number
   notes?: string
   imageUrls: string
@@ -46,32 +47,35 @@ function calculateGrowthInfo(plant: Plant): PlantGrowthInfo {
   const today = new Date()
   const daysSincePlanting = Math.floor((today.getTime() - plantDate.getTime()) / (1000 * 60 * 60 * 24))
 
-  const vegetativeDays = 35 // 5 weeks vegetative phase
-  const floweringDays = plant.floweringWeeks * 7
-
   let phase: 'vegetative' | 'flowering'
   let phaseDisplay: string
   let daysInPhase: number
   let totalPhaseDays: number
   let progressPercentage: number
+  let currentDay: number
 
-  if (daysSincePlanting <= vegetativeDays) {
+  if (!plant.floweringStartDate) {
+    // Still in vegetative phase
     phase = 'vegetative'
-    phaseDisplay = `VT${daysSincePlanting}`
     daysInPhase = daysSincePlanting
-    totalPhaseDays = vegetativeDays
-    progressPercentage = (daysInPhase / totalPhaseDays) * 100
+    phaseDisplay = `VT${daysInPhase}`
+    totalPhaseDays = 999 // No fixed end for veg phase
+    progressPercentage = 0 // No progress bar until flowering starts
+    currentDay = daysInPhase
   } else {
+    // Flowering phase has started
     phase = 'flowering'
-    const daysIntoFlowering = daysSincePlanting - vegetativeDays
-    phaseDisplay = `BT${daysIntoFlowering} (${plant.floweringWeeks} Wochen)`
-    daysInPhase = daysIntoFlowering
-    totalPhaseDays = floweringDays
+    const floweringStart = new Date(plant.floweringStartDate)
+    daysInPhase = Math.floor((today.getTime() - floweringStart.getTime()) / (1000 * 60 * 60 * 24))
+    const totalFloweringDays = plant.floweringWeeks * 7
+    phaseDisplay = `BT${daysInPhase} (${plant.floweringWeeks} Wochen)`
+    totalPhaseDays = totalFloweringDays
     progressPercentage = (daysInPhase / totalPhaseDays) * 100
+    currentDay = daysSincePlanting
   }
 
   return {
-    currentDay: daysSincePlanting,
+    currentDay,
     phase,
     phaseDisplay,
     progressPercentage,
@@ -172,6 +176,7 @@ export default function PlantDetailPage() {
         },
         body: JSON.stringify({
           ...editForm,
+          floweringStartDate: plant?.floweringStartDate,
           imageUrls: plant?.imageUrls || '[]'
         }),
       }).then(async (response) => {
@@ -226,6 +231,7 @@ export default function PlantDetailPage() {
             name: plant?.name,
             strain: plant?.strain,
             plantDate: plant?.plantDate,
+            floweringStartDate: plant?.floweringStartDate,
             floweringWeeks: plant?.floweringWeeks,
             notes: plant?.notes,
             imageUrls: JSON.stringify(newImages)
@@ -243,6 +249,23 @@ export default function PlantDetailPage() {
       )
     }
     reader.readAsDataURL(file)
+  }
+
+  const handleStartFlowering = async () => {
+    toast.promise(
+      fetch(`/api/plants/${params.id}/start-flowering`, {
+        method: 'POST',
+      }).then(async (response) => {
+        if (!response.ok) throw new Error('Failed to start flowering')
+        await fetchPlant()
+        return response
+      }),
+      {
+        loading: 'Blütephase wird eingeleitet...',
+        success: '🌸 Blütephase erfolgreich gestartet!',
+        error: '❌ Fehler beim Einleiten der Blüte',
+      }
+    )
   }
 
   if (loading) {
@@ -458,6 +481,15 @@ export default function PlantDetailPage() {
                   <Droplets className="w-4 h-4 mr-2" />
                   Gießen
                 </Button>
+                {!plant.floweringStartDate && (
+                  <Button
+                    onClick={handleStartFlowering}
+                    className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-lg shadow-purple-500/20 hover:shadow-xl hover:shadow-purple-500/30 transition-all"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Blüte einleiten
+                  </Button>
+                )}
                 <Button variant="outline" className="w-full hover:bg-green-50 dark:hover:bg-green-950 hover:border-green-200 dark:hover:border-green-700 dark:border-gray-600 dark:text-gray-300" onClick={() => document.getElementById('image-upload')?.click()}>
                   <Upload className="w-4 h-4 mr-2" />
                   Foto machen

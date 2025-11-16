@@ -14,6 +14,7 @@ interface Plant {
   name: string
   strain?: string
   plantDate: string
+  floweringStartDate?: string | null
   floweringWeeks: number
   notes?: string
   imageUrls: string
@@ -35,32 +36,35 @@ function calculateGrowthInfo(plant: Plant): PlantGrowthInfo {
   const today = new Date()
   const daysSincePlanting = Math.floor((today.getTime() - plantDate.getTime()) / (1000 * 60 * 60 * 24))
 
-  const vegetativeDays = 35 // 5 weeks vegetative phase
-  const floweringDays = plant.floweringWeeks * 7
-
   let phase: 'vegetative' | 'flowering'
   let phaseDisplay: string
   let daysInPhase: number
   let totalPhaseDays: number
   let progressPercentage: number
+  let currentDay: number
 
-  if (daysSincePlanting <= vegetativeDays) {
+  if (!plant.floweringStartDate) {
+    // Still in vegetative phase
     phase = 'vegetative'
-    phaseDisplay = `VT${daysSincePlanting}`
     daysInPhase = daysSincePlanting
-    totalPhaseDays = vegetativeDays
-    progressPercentage = (daysInPhase / totalPhaseDays) * 100
+    phaseDisplay = `VT${daysInPhase}`
+    totalPhaseDays = 999 // No fixed end for veg phase
+    progressPercentage = 0 // No progress bar until flowering starts
+    currentDay = daysInPhase
   } else {
+    // Flowering phase has started
     phase = 'flowering'
-    const daysIntoFlowering = daysSincePlanting - vegetativeDays
-    phaseDisplay = `BT${daysIntoFlowering} (${plant.floweringWeeks} Wochen)`
-    daysInPhase = daysIntoFlowering
-    totalPhaseDays = floweringDays
+    const floweringStart = new Date(plant.floweringStartDate)
+    daysInPhase = Math.floor((today.getTime() - floweringStart.getTime()) / (1000 * 60 * 60 * 24))
+    const totalFloweringDays = plant.floweringWeeks * 7
+    phaseDisplay = `BT${daysInPhase} (${plant.floweringWeeks} Wochen)`
+    totalPhaseDays = totalFloweringDays
     progressPercentage = (daysInPhase / totalPhaseDays) * 100
+    currentDay = daysSincePlanting
   }
 
   return {
-    currentDay: daysSincePlanting,
+    currentDay,
     phase,
     phaseDisplay,
     progressPercentage,

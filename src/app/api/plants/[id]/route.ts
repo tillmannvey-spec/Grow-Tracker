@@ -29,7 +29,7 @@ export async function PUT(
 ) {
   try {
     const body = await request.json()
-    const { name, strain, plantDate, floweringWeeks, notes, imageUrls } = body
+    const { name, strain, plantDate, floweringStartDate, floweringWeeks, notes, imageUrls } = body
 
     const plant = await db.plant.update({
       where: {
@@ -39,6 +39,7 @@ export async function PUT(
         name,
         strain: strain || null,
         plantDate: new Date(plantDate),
+        floweringStartDate: floweringStartDate ? new Date(floweringStartDate) : null,
         floweringWeeks: floweringWeeks ? parseInt(floweringWeeks, 10) : 8,
         notes: notes || null,
         imageUrls: imageUrls || '[]'

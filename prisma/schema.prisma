@@ -23,16 +23,17 @@ model User {
 }
 
 model Plant {
-  id              String   @id @default(cuid())
-  name            String
-  strain          String?
-  plantDate       DateTime
-  floweringWeeks  Int      @default(8)
-  notes           String?
-  imageUrls       String   @default("[]") // JSON array of image URLs
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  wateringRecords WateringRecord[]
+  id                 String    @id @default(cuid())
+  name               String
+  strain             String?
+  plantDate          DateTime
+  floweringStartDate DateTime? // When flowering phase was manually started
+  floweringWeeks     Int       @default(8)
+  notes              String?
+  imageUrls          String    @default("[]") // JSON array of image URLs
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  wateringRecords    WateringRecord[]
 }
 
 model WateringRecord {
