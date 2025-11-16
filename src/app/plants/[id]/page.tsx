@@ -7,7 +7,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'sonner'
 
 interface Plant {
@@ -83,6 +86,15 @@ export default function PlantDetailPage() {
   const [plant, setPlant] = useState<Plant | null>(null)
   const [wateringRecords, setWateringRecords] = useState<WateringRecord[]>([])
   const [loading, setLoading] = useState(true)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [editForm, setEditForm] = useState({
+    name: '',
+    strain: '',
+    plantDate: '',
+    floweringWeeks: '8',
+    notes: ''
+  })
 
   useEffect(() => {
     if (params.id) {
@@ -136,6 +148,101 @@ export default function PlantDetailPage() {
         error: '❌ Fehler beim Gießen',
       }
     )
+  }
+
+  const handleEditClick = () => {
+    if (plant) {
+      setEditForm({
+        name: plant.name,
+        strain: plant.strain || '',
+        plantDate: new Date(plant.plantDate).toISOString().split('T')[0],
+        floweringWeeks: plant.floweringWeeks.toString(),
+        notes: plant.notes || ''
+      })
+      setEditDialogOpen(true)
+    }
+  }
+
+  const handleEditSave = async () => {
+    toast.promise(
+      fetch(`/api/plants/${params.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...editForm,
+          imageUrls: plant?.imageUrls || '[]'
+        }),
+      }).then(async (response) => {
+        if (!response.ok) throw new Error('Failed to update plant')
+        await fetchPlant()
+        setEditDialogOpen(false)
+        return response
+      }),
+      {
+        loading: 'Pflanze wird aktualisiert...',
+        success: '✅ Pflanze erfolgreich aktualisiert!',
+        error: '❌ Fehler beim Aktualisieren',
+      }
+    )
+  }
+
+  const handleDelete = async () => {
+    toast.promise(
+      fetch(`/api/plants/${params.id}`, {
+        method: 'DELETE',
+      }).then(async (response) => {
+        if (!response.ok) throw new Error('Failed to delete plant')
+        router.push('/')
+        return response
+      }),
+      {
+        loading: 'Pflanze wird gelöscht...',
+        success: '🗑️ Pflanze erfolgreich gelöscht!',
+        error: '❌ Fehler beim Löschen',
+      }
+    )
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Convert to base64
+    const reader = new FileReader()
+    reader.onloadend = async () => {
+      const base64String = reader.result as string
+      const currentImages = JSON.parse(plant?.imageUrls || '[]')
+      const newImages = [...currentImages, base64String]
+
+      toast.promise(
+        fetch(`/api/plants/${params.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: plant?.name,
+            strain: plant?.strain,
+            plantDate: plant?.plantDate,
+            floweringWeeks: plant?.floweringWeeks,
+            notes: plant?.notes,
+            imageUrls: JSON.stringify(newImages)
+          }),
+        }).then(async (response) => {
+          if (!response.ok) throw new Error('Failed to upload image')
+          await fetchPlant()
+          return response
+        }),
+        {
+          loading: 'Bild wird hochgeladen...',
+          success: '📸 Bild erfolgreich hochgeladen!',
+          error: '❌ Fehler beim Hochladen',
+        }
+      )
+    }
+    reader.readAsDataURL(file)
   }
 
   if (loading) {
@@ -195,11 +302,11 @@ export default function PlantDetailPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="hover:bg-green-50 dark:hover:bg-green-950 hover:border-green-200 dark:hover:border-green-700 dark:border-gray-600 dark:text-gray-300">
+              <Button onClick={handleEditClick} variant="outline" size="sm" className="hover:bg-green-50 dark:hover:bg-green-950 hover:border-green-200 dark:hover:border-green-700 dark:border-gray-600 dark:text-gray-300">
                 <Edit className="w-4 h-4 mr-2" />
                 Bearbeiten
               </Button>
-              <Button variant="outline" size="sm" className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 hover:border-red-200 dark:hover:border-red-800 dark:border-gray-600 hover:text-red-700 dark:hover:text-red-300">
+              <Button onClick={() => setDeleteDialogOpen(true)} variant="outline" size="sm" className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950 hover:border-red-200 dark:hover:border-red-800 dark:border-gray-600 hover:text-red-700 dark:hover:text-red-300">
                 <Trash2 className="w-4 h-4 mr-2" />
                 Löschen
               </Button>
@@ -280,10 +387,11 @@ export default function PlantDetailPage() {
                     <Upload className="w-5 h-5 text-green-600 dark:text-green-500" />
                     Bildergalerie
                   </CardTitle>
-                  <Button variant="outline" size="sm" className="hover:bg-green-50 dark:hover:bg-green-950 hover:border-green-200 dark:hover:border-green-700 dark:border-gray-600 dark:text-gray-300">
+                  <Button variant="outline" size="sm" className="hover:bg-green-50 dark:hover:bg-green-950 hover:border-green-200 dark:hover:border-green-700 dark:border-gray-600 dark:text-gray-300" onClick={() => document.getElementById('image-upload')?.click()}>
                     <Upload className="w-4 h-4 mr-2" />
                     Bild hochladen
                   </Button>
+                  <input id="image-upload" type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                 </div>
               </CardHeader>
               <CardContent>
@@ -350,11 +458,11 @@ export default function PlantDetailPage() {
                   <Droplets className="w-4 h-4 mr-2" />
                   Gießen
                 </Button>
-                <Button variant="outline" className="w-full hover:bg-green-50 dark:hover:bg-green-950 hover:border-green-200 dark:hover:border-green-700 dark:border-gray-600 dark:text-gray-300">
+                <Button variant="outline" className="w-full hover:bg-green-50 dark:hover:bg-green-950 hover:border-green-200 dark:hover:border-green-700 dark:border-gray-600 dark:text-gray-300" onClick={() => document.getElementById('image-upload')?.click()}>
                   <Upload className="w-4 h-4 mr-2" />
                   Foto machen
                 </Button>
-                <Button variant="outline" className="w-full hover:bg-green-50 dark:hover:bg-green-950 hover:border-green-200 dark:hover:border-green-700 dark:border-gray-600 dark:text-gray-300">
+                <Button variant="outline" className="w-full hover:bg-green-50 dark:hover:bg-green-950 hover:border-green-200 dark:hover:border-green-700 dark:border-gray-600 dark:text-gray-300" onClick={handleEditClick}>
                   <Calendar className="w-4 h-4 mr-2" />
                   Notiz hinzufügen
                 </Button>
@@ -419,6 +527,96 @@ export default function PlantDetailPage() {
           </div>
         </div>
       </main>
+
+      {/* Edit Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Pflanze bearbeiten</DialogTitle>
+            <DialogDescription>
+              Aktualisiere die Informationen deiner Pflanze
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Name *</Label>
+              <Input
+                id="name"
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                placeholder="z.B. Pflanze #1"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="strain">Sorte</Label>
+              <Input
+                id="strain"
+                value={editForm.strain}
+                onChange={(e) => setEditForm({ ...editForm, strain: e.target.value })}
+                placeholder="z.B. OG Kush"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="plantDate">Einpflanzdatum *</Label>
+              <Input
+                id="plantDate"
+                type="date"
+                value={editForm.plantDate}
+                onChange={(e) => setEditForm({ ...editForm, plantDate: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="floweringWeeks">Blüte-Dauer (Wochen) *</Label>
+              <Input
+                id="floweringWeeks"
+                type="number"
+                min="1"
+                max="20"
+                value={editForm.floweringWeeks}
+                onChange={(e) => setEditForm({ ...editForm, floweringWeeks: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="notes">Notizen</Label>
+              <Textarea
+                id="notes"
+                value={editForm.notes}
+                onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                placeholder="Zusätzliche Informationen..."
+                rows={4}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              Abbrechen
+            </Button>
+            <Button onClick={handleEditSave} className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800">
+              Speichern
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Pflanze löschen?</DialogTitle>
+            <DialogDescription>
+              Bist du sicher, dass du <strong>{plant?.name}</strong> löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+              Abbrechen
+            </Button>
+            <Button variant="destructive" onClick={handleDelete}>
+              Löschen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
